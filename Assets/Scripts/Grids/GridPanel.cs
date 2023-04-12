@@ -26,6 +26,19 @@ namespace Grids
         public int CellCount => CellRowCount * CellColumnCount;
 
 
+        private void OnEnable()
+        {
+            foreach (var cell in CellList)
+            {
+                cell.AddListener(CellClick);
+            }
+        }
+
+        private void CellClick(bool lightOn)
+        {
+            
+        }
+
         public void SerializeGrid(int gridB)
         {
             //00.0068988 seconds

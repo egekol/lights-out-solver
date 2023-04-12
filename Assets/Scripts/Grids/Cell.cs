@@ -14,6 +14,11 @@ namespace Grids
         private Button cellButton;
         public Button CellButton => cellButton ??= GetComponentInChildren<Button>(true);
 
+        private void Start()
+        {
+            SetLight(_isOn);
+        }
+
         public void AddListener(Action<bool> func)
         {
             _onToggleButtonClickAction = func;
