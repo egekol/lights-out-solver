@@ -92,7 +92,7 @@ public class JobChain : MonoBehaviour
         }
     }
 
-    [BurstCompile]
+    
     private struct OnCompleteJob : IJob
     {
         [DeallocateOnJobCompletion] public NativeArray<int> resultArray;

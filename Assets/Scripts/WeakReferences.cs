@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Utilities;
 
 /* 
  * 
@@ -33,21 +34,8 @@ public class SomeBehaviour : MonoBehaviour
 }
 
 
-public class DependencyInjector : MonoBehaviour
+public class DependencyInjector : Singleton<DependencyInjector>
 {
-    private static DependencyInjector _instance;
-
-    public static DependencyInjector Instance
-    {
-        get
-        {
-            // lock (_lock)
-            // {
-            if (_instance == null) _instance = (DependencyInjector) FindObjectOfType(typeof(DependencyInjector));
-            return _instance;
-            // }
-        }
-    }
 
     private readonly Dictionary<Type, object> _dependencies = new Dictionary<Type, object>();
 
@@ -68,7 +56,8 @@ public class DependencyInjector : MonoBehaviour
             return dependency;
         }
 
-        Debug.LogError("Null");
+        Debug.LogError($"'{type}' not found.");
+        // Debug.LogError("Null");
         return null;
     }
 }
