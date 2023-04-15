@@ -1,5 +1,7 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
-   
+
 /* 
  * 
  * The SomeBehaviour class below holds a serialized reference to another MonoBehaviour which is in the same scene.
@@ -14,7 +16,12 @@ using UnityEngine;
  * Make sure you describe your code and intentions clearly.
  * 
  */
-   
+
+// DI makes things
+//     a) Easily unit testable
+//     b) Easily implementation swappable
+
+
 public class SomeBehaviour : MonoBehaviour
 {
     public MonoBehaviour OtherBehaviour;
@@ -22,5 +29,46 @@ public class SomeBehaviour : MonoBehaviour
     private void Start()
     {
         // Operations dependent on OtherBehaviour
+    }
+}
+
+
+public class DependencyInjector : MonoBehaviour
+{
+    private static DependencyInjector _instance;
+
+    public static DependencyInjector Instance
+    {
+        get
+        {
+            // lock (_lock)
+            // {
+            if (_instance == null) _instance = (DependencyInjector) FindObjectOfType(typeof(DependencyInjector));
+            return _instance;
+            // }
+        }
+    }
+
+    private readonly Dictionary<Type, object> _dependencies = new Dictionary<Type, object>();
+
+    public void Register<T>(T dependency)
+    {
+        _dependencies[typeof(T)] = dependency;
+    }
+
+    public T Resolve<T>()
+    {
+        return (T) Resolve(typeof(T));
+    }
+
+    private object Resolve(Type type)
+    {
+        if (_dependencies.TryGetValue(type, out var dependency))
+        {
+            return dependency;
+        }
+
+        Debug.LogError("Null");
+        return null;
     }
 }
