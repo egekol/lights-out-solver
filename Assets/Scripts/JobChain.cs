@@ -88,7 +88,17 @@ public class JobChain : MonoBehaviour
 
         public void Execute(int index)
         {
-            resultArray[index] = sourceArray[index] & maskArray[index];
+
+            if (maskArray[index]==0)
+            {
+                resultArray[index] = 0;
+            }
+            else
+            {
+                resultArray[index] = sourceArray[index];
+            }
+
+            // resultArray[index] = sourceArray[index] & maskArray[index];
         }
     }
 
