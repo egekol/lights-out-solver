@@ -13,15 +13,24 @@ namespace Managers
         private AsyncOperation _asyncOperation;
         [SerializeField] private SceneSettingsSO sceneSettingsSo;
         
-        public void LoadLevelScene(SceneReference reference)
+        public void LoadSceneReference(SceneReference reference)
         {
             // SceneManager.LoadScene(reference);
+            Debug.Log("Ref: "+ reference.Name);
             StartCoroutine(StartLoadSceneProcess(reference));
+        }
+        public void LoadLevelScene(int levelNumber)
+        {
+            var lvl = levelNumber.ToString("00");
+            Debug.Log(lvl);
+            Debug.Log("G_LevelScene"+lvl);
+            LoadSceneReference(sceneSettingsSo.gameSceneList.First(i=>i.Name=="G_LevelScene"+lvl));
+
         }
 
         public void LoadMainMenu()
         {
-            LoadLevelScene(sceneSettingsSo.gameSceneList.First(i=>i.Name=="MainMenu"));
+            LoadSceneReference(sceneSettingsSo.gameSceneList.First(i=>i.Name=="MainMenu"));
         }
 
         private void Awake()
