@@ -4,7 +4,6 @@ using UnityEngine;
 using Utilities;
 
 /* 
- * 
  * The SomeBehaviour class below holds a serialized reference to another MonoBehaviour which is in the same scene.
  * On Start, it performs some operations that are dependent on this OtherBehaviour.
  * 
@@ -15,7 +14,6 @@ using Utilities;
  * Implement your simple and generalized solution to this problem, so that similar problems that can be encountered in the future can be solved easily. 
  * 
  * Make sure you describe your code and intentions clearly.
- * 
  */
 
 
@@ -48,7 +46,6 @@ public class SomeBehaviour : MonoBehaviour
 
     private void Start()
     {
-        
 
         OtherBehaviour = BehaviourRegistry.Instance.GetBehaviour<MonoBehaviour>("OtherBehaviour");
 
@@ -61,7 +58,7 @@ public class SomeBehaviour : MonoBehaviour
         //This solution allows you to register any number of MonoBehaviour classes with unique keys in the BehaviourRegistry.
         //You can easily retrieve the registered behaviours in any scene using the Singleton BehaviourRegistry.
         
-        // Generally I use registration for unique manager classes that also may not be Mono class.
+            // Generally I use registration for unique manager classes that also may not be Mono class.
         // DI makes things
         //     a) Easily unit testable 
         //     b) Easily implementation swappable
