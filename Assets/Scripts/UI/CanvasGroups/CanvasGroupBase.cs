@@ -1,6 +1,8 @@
 ﻿// 16042023
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 
@@ -17,6 +19,7 @@ namespace UI.CanvasGroups
                 CanvasGroup.interactable = !value;
             }
         }
+        public List<AlphaGroup> AlphaGroups { get; set; }
 
         private CanvasGroup canvasGroup;
         private bool _isLocked;
@@ -27,15 +30,28 @@ namespace UI.CanvasGroups
             CanvasGroup.alpha = val;
             
         }
+
+        public void OnEnable()
+        {
+            AlphaGroups = GetComponentsInChildren<AlphaGroup>(true).ToList();
+
+        }
+
         public virtual void ClosePanel(Action onComplete = null)
         {
             IsLocked = true;
             transform.DOComplete();
+            float a = CanvasGroup.alpha;
             DOTween.To(() => CanvasGroup.alpha, x =>
             {
-                CanvasGroup.alpha = x;
-
-            }, 0, 1.5f).OnComplete(() =>
+                a = x;
+                CanvasGroup.alpha = a;
+                foreach (var alphaGroup in AlphaGroups)
+                {
+                    // Debug.Log(a);///
+                    alphaGroup.SetAlpha(a);
+                }
+            }, 0f, .5f).OnComplete(() =>
             {
                 IsLocked = false;
                 onComplete?.Invoke();
@@ -51,7 +67,7 @@ namespace UI.CanvasGroups
             {
                 CanvasGroup.alpha = x;
 
-            }, 1, 1.5f).OnComplete(() =>
+            }, 1f, .5f).OnComplete(() =>
             {
                 IsLocked = false;
                 onComplete?.Invoke();

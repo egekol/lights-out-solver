@@ -579,6 +579,58 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 392895932536291573, guid: 0749a1f17b998864692c640148a75912, type: 3}
+      propertyPath: gameSceneList.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 392895932536291573, guid: 0749a1f17b998864692c640148a75912, type: 3}
+      propertyPath: gameSceneList.Array.data[0].scenePath
+      value: Assets/Scenes/IntroScene.unity
+      objectReference: {fileID: 0}
+    - target: {fileID: 392895932536291573, guid: 0749a1f17b998864692c640148a75912, type: 3}
+      propertyPath: gameSceneList.Array.data[1].scenePath
+      value: Assets/Scenes/MainMenu.unity
+      objectReference: {fileID: 0}
+    - target: {fileID: 392895932536291573, guid: 0749a1f17b998864692c640148a75912, type: 3}
+      propertyPath: gameSceneList.Array.data[2].scenePath
+      value: Assets/Scenes/G_LevelScene00.unity
+      objectReference: {fileID: 0}
+    - target: {fileID: 392895932536291573, guid: 0749a1f17b998864692c640148a75912, type: 3}
+      propertyPath: gameSceneList.Array.data[3].scenePath
+      value: Assets/Scenes/G_LevelScene01.unity
+      objectReference: {fileID: 0}
+    - target: {fileID: 392895932536291573, guid: 0749a1f17b998864692c640148a75912, type: 3}
+      propertyPath: gameSceneList.Array.data[4].scenePath
+      value: Assets/Scenes/G_LevelScene02.unity
+      objectReference: {fileID: 0}
+    - target: {fileID: 392895932536291573, guid: 0749a1f17b998864692c640148a75912, type: 3}
+      propertyPath: gameSceneList.Array.data[5].scenePath
+      value: Assets/Scenes/G_LevelScene03.unity
+      objectReference: {fileID: 0}
+    - target: {fileID: 392895932536291573, guid: 0749a1f17b998864692c640148a75912, type: 3}
+      propertyPath: gameSceneList.Array.data[0].sceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: 1a89b54b4521e19488e4fc175cb83711, type: 3}
+    - target: {fileID: 392895932536291573, guid: 0749a1f17b998864692c640148a75912, type: 3}
+      propertyPath: gameSceneList.Array.data[1].sceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: 8c9cfa26abfee488c85f1582747f6a02, type: 3}
+    - target: {fileID: 392895932536291573, guid: 0749a1f17b998864692c640148a75912, type: 3}
+      propertyPath: gameSceneList.Array.data[2].sceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: 66cbde6ff7bc6444abd1631f115e15bd, type: 3}
+    - target: {fileID: 392895932536291573, guid: 0749a1f17b998864692c640148a75912, type: 3}
+      propertyPath: gameSceneList.Array.data[3].sceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: a7a8d3d2d089a8b44acad4e591a48bc6, type: 3}
+    - target: {fileID: 392895932536291573, guid: 0749a1f17b998864692c640148a75912, type: 3}
+      propertyPath: gameSceneList.Array.data[4].sceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: 3cb5fb953ebd7ea4a8954acd8bdee808, type: 3}
+    - target: {fileID: 392895932536291573, guid: 0749a1f17b998864692c640148a75912, type: 3}
+      propertyPath: gameSceneList.Array.data[5].sceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: 41c0c0b722cb340f1b09f981b20c7507, type: 3}
     - target: {fileID: 1110354984970751843, guid: 0749a1f17b998864692c640148a75912, type: 3}
       propertyPath: m_RootOrder
       value: 5

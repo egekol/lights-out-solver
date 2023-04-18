@@ -2,6 +2,7 @@
 
 using System;
 using TMPro;
+using UI.CanvasGroups;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,9 @@ namespace UI
         public int level;
         public SceneReference LevelReference;
         private MainMenuUI _mainMenu;
+        private AlphaGroup alphaGroup;
+        public AlphaGroup AlphaGroup => alphaGroup ??= GetComponent<AlphaGroup>();
+        
         private TextMeshProUGUI tMPLevelText;
         public TextMeshProUGUI TMPLevelText => tMPLevelText ??= GetComponentInChildren<TextMeshProUGUI>(true);
 
@@ -32,7 +36,7 @@ namespace UI
 
         private void GoToLevel()
         {
-            _mainMenu.GroupSceneTransition.ChangeSceneToLevel(LevelReference);
+            _mainMenu.GroupSceneTransition.ChangeSceneToLevel(level);
         }
     }
 }

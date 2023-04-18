@@ -9,6 +9,5 @@ namespace Managers
     public class SceneSettingsSO : ScriptableObject
     {
         public List<SceneReference> gameSceneList;
-
     }
 }
