@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using Managers;
+using Unity.Collections;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -10,7 +13,6 @@ namespace Grids
     {
         private const int CellRowCount = 5;
         private const int CellColumnCount = 5;
-
 
         [SerializeField] private List<Cell> cellList;
         [SerializeField] private int testGridNumber;
@@ -23,8 +25,9 @@ namespace Grids
             set => cellList = value;
         }
 
-        public int CellCount => CellRowCount * CellColumnCount;
+        public int[] GridMask { get; private set; }
 
+        public int CellCount => CellRowCount * CellColumnCount;
 
         private void OnEnable()
         {
@@ -32,11 +35,69 @@ namespace Grids
             {
                 cell.AddListener(CellClick);
             }
+
+            CreateMask();
+            SerializeGrid(PlayerPrefKeys.CurrentGridPattern);
         }
 
-        private void CellClick(bool lightOn)
+        private void CreateMask()
         {
-            
+            GridMask = new int[CellCount];
+
+            Debug.Log("Init");
+            for (int i = 0; i < GridMask.Length; i++)
+            {
+                int gridCell = 0;
+                gridCell += 1 << i;
+                if ((i + 1) % 5 != 0)
+                {
+                    gridCell += 1 << i + 1;
+                }
+
+                if (i % 5 != 0)
+                {
+                    gridCell += 1 << i - 1;
+                }
+
+                if (i + 5 <= 24)
+                {
+                    gridCell += 1 << i + 5;
+                }
+
+                if (i - 5 > 0)
+                {
+                    gridCell += 1 << i - 5;
+                }
+
+                GridMask[i] = gridCell;
+                Debug.Log(Convert.ToString(gridCell, 2));
+            }
+        }
+
+
+        private void CellClick(int lightIndex)
+        {
+            Debug.Log($"CurrentGrid {Convert.ToString(PlayerPrefKeys.CurrentGridPattern, 2)}");
+            Debug.Log($"GridMask {lightIndex} : {Convert.ToString(GridMask[lightIndex], 2)}");
+            var newGrid = PlayerPrefKeys.CurrentGridPattern ^ GridMask[lightIndex];
+            Debug.Log($"newGrid {Convert.ToString(newGrid, 2)}");
+            SerializeGrid(newGrid);
+            PlayerPrefKeys.CurrentGridPattern = newGrid;
+        }
+
+        // public int CurrentGrid => GetCurrentGrid();
+
+        private int GetCurrentGrid()
+        {
+            int grid = 0;
+            for (int i = 0; i < CellList.Count; i++)
+            {
+                grid <<= Convert.ToInt32(CellList[i].IsOn);
+                Debug.Log(grid);
+            }
+
+            return grid;
+            // return CellList.Sum(t => 1 << Convert.ToInt32(t.IsOn));
         }
 
         public void SerializeGrid(int gridB)
@@ -58,13 +119,15 @@ namespace Grids
                 var mask = 1 << i;
                 // Debug.Log(Convert.ToString(mask, 2));
                 // Debug.Log(Convert.ToString(gridB, 2));
-                bool isLight = (gridB & mask)>0;
+                bool isLight = (gridB & mask) > 0;
                 // Debug.Log(isLight);
                 _gridBList[i] = isLight;
+                CellList[i].Switch(isLight);
             }
+            
 
-            var j = string.Join(",", _gridBList);
-            Debug.Log(j);
+            // var j = string.Join("", _gridBList);
+            // PlayerPrefKeys.CurrentGridPattern= Convert.ToInt32(j);
         }
 
         //
