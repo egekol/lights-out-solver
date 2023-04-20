@@ -36,15 +36,20 @@ namespace Grids
                 cell.AddListener(CellClick);
             }
 
+            // int v = 33554432;
+            // Debug.Log(Convert.ToString(v,2));
+            // Debug.Log(Convert.ToString(v-1,2));
             CreateMask();
             SerializeGrid(PlayerPrefKeys.CurrentGridPattern);
+            // int g = 0b1000111011;
         }
+
 
         private void CreateMask()
         {
             GridMask = new int[CellCount];
 
-            Debug.Log("Init");
+            Debug.Log("Init Mask: " + GridMask.Length);
             for (int i = 0; i < GridMask.Length; i++)
             {
                 int gridCell = 0;
@@ -64,16 +69,16 @@ namespace Grids
                     gridCell += 1 << i + 5;
                 }
 
-                if (i - 5 > 0)
+                if (i - 5 >= 0)
                 {
                     gridCell += 1 << i - 5;
                 }
 
                 GridMask[i] = gridCell;
-                Debug.Log(Convert.ToString(gridCell, 2));
             }
-        }
 
+            Debug.Log(Convert.ToString(GridMask[5], 2));
+        }
 
         private void CellClick(int lightIndex)
         {
@@ -83,6 +88,13 @@ namespace Grids
             Debug.Log($"newGrid {Convert.ToString(newGrid, 2)}");
             SerializeGrid(newGrid);
             PlayerPrefKeys.CurrentGridPattern = newGrid;
+            CheckWinCondition(newGrid);
+        }
+
+        private void CheckWinCondition(int value)
+        {
+            if ((value & (value - 1)) == 0)
+                Debug.Log("WIN");
         }
 
         // public int CurrentGrid => GetCurrentGrid();
@@ -124,13 +136,12 @@ namespace Grids
                 _gridBList[i] = isLight;
                 CellList[i].Switch(isLight);
             }
-            
+
 
             // var j = string.Join("", _gridBList);
             // PlayerPrefKeys.CurrentGridPattern= Convert.ToInt32(j);
         }
 
-        //
         // [ContextMenu("TestNumber")]
         // public void Test()
         // {
