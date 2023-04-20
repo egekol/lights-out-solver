@@ -1,12 +1,11 @@
 ﻿// 17042023
 
-using System;
 using TMPro;
 using UI.CanvasGroups;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI
+namespace UI.MainMenu
 {
     public class LevelButton : MonoBehaviour
     {

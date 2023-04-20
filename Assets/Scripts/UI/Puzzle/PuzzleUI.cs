@@ -1,10 +1,10 @@
 ﻿// 15042023
 
-using UI;
+using Managers;
 using UI.CanvasGroups;
 using UnityEngine;
 
-namespace Managers
+namespace UI.Puzzle
 {
     public class PuzzleUI : MonoBehaviour
     {
@@ -16,7 +16,7 @@ namespace Managers
             backButton.Button.onClick.AddListener(GoToMenu);
             
             canvasGroupSceneTransition.SetAlphaTo(0);
-            canvasGroupSceneTransition.OpenPanel();
+            canvasGroupSceneTransition.OpenPanel(LevelManager.StartLevel);
         }
 
         private void GoToMenu()

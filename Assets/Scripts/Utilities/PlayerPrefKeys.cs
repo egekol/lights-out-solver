@@ -1,12 +1,13 @@
 // 15042023
 
+using System;
 using UnityEngine;
 
-namespace Managers
+namespace Utilities
 {
     public static class PlayerPrefKeys
     {
-        public static int CurrentLevel
+        public static int CurrentPuzzleLevel
         {
             get => PlayerPrefs.GetInt("CurrentLevel", 0);
             set => PlayerPrefs.SetInt("CurrentLevel", value);
@@ -16,5 +17,12 @@ namespace Managers
             get => PlayerPrefs.GetInt("CurrentGridPattern", 0);
             set => PlayerPrefs.SetInt("CurrentGridPattern", value);
         }
+        public static int StartingGridPattern
+        {
+            get => PlayerPrefs.GetInt("StartingGridPattern", 0);
+            set => PlayerPrefs.SetInt("StartingGridPattern", value);
+        }
+
+       
     }
 }

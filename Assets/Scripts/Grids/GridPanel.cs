@@ -1,11 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Managers;
 using Unity.Collections;
 using UnityEngine;
+using Utilities;
 using Debug = UnityEngine.Debug;
+using Random = UnityEngine.Random;
 
 namespace Grids
 {
@@ -40,8 +43,37 @@ namespace Grids
             // Debug.Log(Convert.ToString(v,2));
             // Debug.Log(Convert.ToString(v-1,2));
             CreateMask();
-            SerializeGrid(PlayerPrefKeys.CurrentGridPattern);
+            if (PlayerPrefKeys.StartingGridPattern == 0)
+            {
+                Debug.Log("Create a new Grid");
+                CreateNewGrid(false);
+            }
+            else
+            {
+                Debug.Log("Load Last Saved Grid: "+ PlayerPrefKeys.StartingGridPattern);
+                SerializeGrid(PlayerPrefKeys.CurrentGridPattern);
+            }
+
             // int g = 0b1000111011;
+        }
+
+        private void CreateNewGrid(bool isAnimated)
+        {
+            StartCoroutine(CreateAnimatedGridPattern(isAnimated));
+        }
+
+        private IEnumerator CreateAnimatedGridPattern(bool isAnimated)
+        {
+            var newGrid =0;
+
+            var range = Random.Range(10,100);
+            Debug.Log("Range: "+range);
+            for (int i = 0; i < range; i++)
+            {
+                newGrid ^= GridMask[Random.Range(0,CellCount)];
+            }
+           SetGrid(newGrid);
+            yield return null;
         }
 
 
@@ -76,25 +108,31 @@ namespace Grids
 
                 GridMask[i] = gridCell;
             }
-
-            Debug.Log(Convert.ToString(GridMask[5], 2));
         }
 
         private void CellClick(int lightIndex)
         {
-            Debug.Log($"CurrentGrid {Convert.ToString(PlayerPrefKeys.CurrentGridPattern, 2)}");
-            Debug.Log($"GridMask {lightIndex} : {Convert.ToString(GridMask[lightIndex], 2)}");
+            // Debug.Log($"CurrentGrid {Convert.ToString(PlayerPrefKeys.CurrentGridPattern, 2)}");
+            // Debug.Log($"GridMask {lightIndex} : {Convert.ToString(GridMask[lightIndex], 2)}");
             var newGrid = PlayerPrefKeys.CurrentGridPattern ^ GridMask[lightIndex];
-            Debug.Log($"newGrid {Convert.ToString(newGrid, 2)}");
+            // Debug.Log($"newGrid {Convert.ToString(newGrid, 2)}");
+            SetGrid(newGrid);
+            CheckWinCondition(newGrid);
+        }
+
+        private void SetGrid(int newGrid)
+        {
             SerializeGrid(newGrid);
             PlayerPrefKeys.CurrentGridPattern = newGrid;
-            CheckWinCondition(newGrid);
         }
 
         private void CheckWinCondition(int value)
         {
             if ((value & (value - 1)) == 0)
+            {
                 Debug.Log("WIN");
+                LevelManager.InitLevelComplete();
+            }
         }
 
         // public int CurrentGrid => GetCurrentGrid();
@@ -115,17 +153,18 @@ namespace Grids
         public void SerializeGrid(int gridB)
         {
             //00.0068988 seconds (but data??)
-            // var str = Convert.ToString(gridB, 2);
-            // var c = 0;
-            // for (int i = str.Length - 1; i >= 0; i--)
-            // {
-            //     bool isLight = (str[i] & 1) > 0;
-            //     _gridBList[c] = isLight;
-            //     c++;
-            // }
+            /*
+             var str = Convert.ToString(gridB, 2);
+            var c = 0;
+            for (int i = str.Length - 1; i >= 0; i--)
+            {
+                bool isLight = (str[i] & 1) > 0;
+                _gridBList[c] = isLight;
+                c++;
+            }
+            */
 
             //00.007372 seconds
-            // Debug.Log("Mask: ");
             for (int i = 0; i < CellCount; i++)
             {
                 var mask = 1 << i;
@@ -142,23 +181,6 @@ namespace Grids
             // PlayerPrefKeys.CurrentGridPattern= Convert.ToInt32(j);
         }
 
-        // [ContextMenu("TestNumber")]
-        // public void Test()
-        // {
-        //     Stopwatch st = new Stopwatch();
-        //     st.Start();
-        //     SerializeGrid(testGridNumber);
-        //     if (CellList.Count >= _gridBList.Length)
-        //     {
-        //         for (var i = 0; i < CellList.Count; i++)
-        //         {
-        //             var cell = CellList[i];
-        //             cell.SetLight(_gridBList[i]);
-        //         }
-        //     }
-        //
-        //     st.Stop();
-        //     Debug.Log(st.Elapsed);
-        // }
+       
     }
 }

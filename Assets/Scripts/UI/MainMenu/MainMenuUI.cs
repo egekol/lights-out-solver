@@ -1,13 +1,11 @@
 ﻿// 16042023
 
-using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using UI.CanvasGroups;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace UI
+namespace UI.MainMenu
 {
     public class MainMenuUI : MonoBehaviour
     {
