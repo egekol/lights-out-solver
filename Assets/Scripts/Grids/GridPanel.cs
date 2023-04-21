@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Managers;
+using UI.Puzzle;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using Utilities;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
@@ -18,9 +20,14 @@ namespace Grids
         private const int CellColumnCount = 5;
 
         [SerializeField] private List<Cell> cellList;
-        [SerializeField] private int testGridNumber;
+        [SerializeField] private Button restartButton;
+
+        
+        // [SerializeField] private int testGridNumber;
 
         private bool[] _gridBList = new bool[CellColumnCount * CellRowCount];
+        private WaitForSeconds _patternYield;
+        private PuzzleUI _puzzleUI;
 
         public List<Cell> CellList
         {
@@ -28,6 +35,7 @@ namespace Grids
             set => cellList = value;
         }
 
+        public bool IsInit { get; set; }
         public int[] GridMask { get; private set; }
 
         public int CellCount => CellRowCount * CellColumnCount;
@@ -38,25 +46,60 @@ namespace Grids
             {
                 cell.AddListener(CellClick);
             }
+            
+            IsInit = false;
 
-            // int v = 33554432;
+            // int v = 0;
             // Debug.Log(Convert.ToString(v,2));
             // Debug.Log(Convert.ToString(v-1,2));
             CreateMask();
-            if (PlayerPrefKeys.StartingGridPattern == 0)
-            {
-                Debug.Log("Create a new Grid");
-                CreateNewGrid(false);
-            }
-            else
-            {
-                Debug.Log("Load Last Saved Grid: "+ PlayerPrefKeys.StartingGridPattern);
-                SerializeGrid(PlayerPrefKeys.CurrentGridPattern);
-            }
-
+            LevelManager.LevelStart += InitLevel;
+            LevelManager.LevelComplete += ResetPattern;
+            restartButton.onClick.AddListener(RestartPattern);
             // int g = 0b1000111011;
         }
 
+        private void OnDisable()
+        {
+            LevelManager.LevelComplete -= ResetPattern;
+            LevelManager.LevelStart -= InitLevel;
+            restartButton.onClick.RemoveListener(RestartPattern);
+
+        }
+
+        private void Start()
+        {
+            Debug.Log("StartLevel");
+            _puzzleUI = DependencyInjector.Instance.Resolve<PuzzleUI>();
+            LevelManager.StartLevel();
+        }
+
+        private void InitLevel()
+        {
+          
+            if (PlayerPrefKeys.StartingGridPattern == 0)
+            {
+                _puzzleUI.GroupSceneTransition.CanvasGroup.interactable = false;
+                Debug.Log("Create a new Grid");
+                CreateNewGrid(IsInit);
+            }
+            else
+            {
+                Debug.Log("Load Last Saved Grid: " + PlayerPrefKeys.CurrentGridPattern);
+                SerializeGrid(PlayerPrefKeys.CurrentGridPattern);
+            }
+            IsInit = true;
+        }
+       
+        private void ResetPattern()
+        {
+            PlayerPrefKeys.StartingGridPattern = 0;
+        }
+        private void RestartPattern()
+        {
+            SerializeGrid(PlayerPrefKeys.StartingGridPattern);
+            PlayerPrefKeys.CurrentGridPattern = PlayerPrefKeys.StartingGridPattern;
+        }
         private void CreateNewGrid(bool isAnimated)
         {
             StartCoroutine(CreateAnimatedGridPattern(isAnimated));
@@ -64,16 +107,30 @@ namespace Grids
 
         private IEnumerator CreateAnimatedGridPattern(bool isAnimated)
         {
-            var newGrid =0;
+            var newGrid = 0;
+            var maxC = Extensions.Map(PlayerPrefKeys.CurrentPuzzleLevel, 0, 100, 20, 200);
+            var range = Random.Range(10, maxC);
+            Debug.Log("Range: " + range);
+            _patternYield = new WaitForSeconds(1.5f / range);
 
-            var range = Random.Range(10,100);
-            Debug.Log("Range: "+range);
             for (int i = 0; i < range; i++)
             {
-                newGrid ^= GridMask[Random.Range(0,CellCount)];
+                newGrid ^= GridMask[Random.Range(0, CellCount)];
+                if (isAnimated)
+                {
+                    SetGrid(newGrid);
+                    yield return _patternYield;
+                }
             }
-           SetGrid(newGrid);
+
+            SetGrid(newGrid);
+            
             yield return null;
+            
+            PlayerPrefKeys.CurrentGridPattern = newGrid;
+            PlayerPrefKeys.StartingGridPattern = newGrid;
+            _puzzleUI.GroupSceneTransition.CanvasGroup.interactable = true;
+
         }
 
 
@@ -117,20 +174,26 @@ namespace Grids
             var newGrid = PlayerPrefKeys.CurrentGridPattern ^ GridMask[lightIndex];
             // Debug.Log($"newGrid {Convert.ToString(newGrid, 2)}");
             SetGrid(newGrid);
+            PlayerPrefKeys.CurrentGridPattern = newGrid;
+
             CheckWinCondition(newGrid);
         }
 
         private void SetGrid(int newGrid)
         {
             SerializeGrid(newGrid);
-            PlayerPrefKeys.CurrentGridPattern = newGrid;
         }
 
         private void CheckWinCondition(int value)
         {
-            if ((value & (value - 1)) == 0)
+            //In my first task, I thought job chain was looking for win condition,
+            //but the only remaining buttons also gives me win...
+            // if ((value & (value - 1)) == 0)
+            if(value==0)
             {
-                Debug.Log("WIN");
+                Debug.Log("WIN: "+PlayerPrefKeys.CurrentGridPattern);
+                Debug.Log("value : "+ value);
+                Debug.Log("value - 1 : "+ (value - 1));
                 LevelManager.InitLevelComplete();
             }
         }
@@ -180,7 +243,5 @@ namespace Grids
             // var j = string.Join("", _gridBList);
             // PlayerPrefKeys.CurrentGridPattern= Convert.ToInt32(j);
         }
-
-       
     }
 }

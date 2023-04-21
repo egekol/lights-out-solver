@@ -24,7 +24,7 @@ namespace UI.MainMenu
         {
             TMPLevelText.text = "LEVEL " + level;
             _mainMenu = mainMenuUI;
-            Debug.Log("OnClick");
+            // Debug.Log("OnClick");
             Button.onClick.AddListener(GoToLevel);
         }
 

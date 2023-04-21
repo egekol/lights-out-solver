@@ -16,12 +16,12 @@ namespace UI.Puzzle
         private void OnEnable()
         {
             SetLevelText();
-            LevelManager.LevelComplete += SetLevelText;
+            LevelManager.LevelStart += SetLevelText;
         }
 
         private void OnDisable()
         {
-            LevelManager.LevelComplete -= SetLevelText;
+            LevelManager.LevelStart -= SetLevelText;
         }
 
         private void SetLevelText()
