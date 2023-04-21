@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -88,8 +89,8 @@ public class JobChain : MonoBehaviour
 
         public void Execute(int index)
         {
-            resultArray[index] = maskArray[index] == 0 ? 0 : sourceArray[index];
-            // resultArray[index] = sourceArray[index] & maskArray[index];
+            // resultArray[index] = maskArray[index] == 0 ? 0 : sourceArray[index];
+            resultArray[index] = sourceArray[index] & maskArray[index];
         }
     }
 
@@ -105,4 +106,6 @@ public class JobChain : MonoBehaviour
             onComplete(resultArray);
         }
     }
+
+
 }
