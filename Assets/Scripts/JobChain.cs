@@ -94,7 +94,7 @@ public class JobChain : MonoBehaviour
         }
     }
 
-    
+
     private struct OnCompleteJob : IJob
     {
         [DeallocateOnJobCompletion] public NativeArray<int> resultArray;
@@ -106,6 +106,4 @@ public class JobChain : MonoBehaviour
             onComplete(resultArray);
         }
     }
-
-
 }

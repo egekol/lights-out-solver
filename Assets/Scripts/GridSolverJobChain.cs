@@ -50,7 +50,7 @@ public class GridSolverJobChain : MonoBehaviour
         OnComplete += GetArray;
         _stateLookup = new NativeParallelHashMap<int, NativeParallelHashMap<int, int>>(2048, Allocator.Persistent);
         _stateLookup.Add(start_state,
-            new NativeParallelHashMap<int, int> { { 0, -1 }, { 1, -1 } });
+            new NativeParallelHashMap<int, int> {{0, -1}, {1, -1}});
         _gridQueue.Enqueue(start_state);
 
         BFS(default);
@@ -133,7 +133,7 @@ public class GridSolverJobChain : MonoBehaviour
             Debug.Log("currentState: " + Convert.ToString(currentState, 2));
             Debug.Log("newState: " + Convert.ToString(newState, 2));
             StateLookup.Add(newState,
-                new NativeParallelHashMap<int, int> { { 0, currentState }, { 1, index } });
+                new NativeParallelHashMap<int, int> {{0, currentState}, {1, index}});
             GridQueue.Enqueue(newState);
         }
     }
@@ -166,7 +166,7 @@ public class GridSolverJobChain : MonoBehaviour
     }
 }
 
-
+//TODO
 //This bfs works properly asynchronous but too slow
 /*public IEnumerator Main()
 {

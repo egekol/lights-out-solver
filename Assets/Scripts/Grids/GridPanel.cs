@@ -1,11 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using Managers;
 using UI.Puzzle;
-using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using Utilities;
@@ -22,7 +19,7 @@ namespace Grids
         [SerializeField] private List<Cell> cellList;
         [SerializeField] private Button restartButton;
 
-        
+
         // [SerializeField] private int testGridNumber;
 
         private bool[] _gridBList = new bool[CellColumnCount * CellRowCount];
@@ -46,17 +43,13 @@ namespace Grids
             {
                 cell.AddListener(CellClick);
             }
-            
+
             IsInit = false;
 
-            // int v = 0;
-            // Debug.Log(Convert.ToString(v,2));
-            // Debug.Log(Convert.ToString(v-1,2));
             CreateMask();
             LevelManager.LevelStart += InitLevel;
             LevelManager.LevelComplete += ResetPattern;
             restartButton.onClick.AddListener(RestartPattern);
-            // int g = 0b1000111011;
         }
 
         private void OnDisable()
@@ -64,19 +57,16 @@ namespace Grids
             LevelManager.LevelComplete -= ResetPattern;
             LevelManager.LevelStart -= InitLevel;
             restartButton.onClick.RemoveListener(RestartPattern);
-
         }
 
         private void Start()
         {
-            Debug.Log("StartLevel");
             _puzzleUI = DependencyInjector.Instance.Resolve<PuzzleUI>();
             LevelManager.StartLevel();
         }
 
         private void InitLevel()
         {
-          
             if (PlayerPrefKeys.StartingGridPattern == 0)
             {
                 _puzzleUI.GroupSceneTransition.CanvasGroup.interactable = false;
@@ -88,18 +78,21 @@ namespace Grids
                 Debug.Log("Load Last Saved Grid: " + PlayerPrefKeys.CurrentGridPattern);
                 SerializeGrid(PlayerPrefKeys.CurrentGridPattern);
             }
+
             IsInit = true;
         }
-       
+
         private void ResetPattern()
         {
             PlayerPrefKeys.StartingGridPattern = 0;
         }
+
         private void RestartPattern()
         {
             SerializeGrid(PlayerPrefKeys.StartingGridPattern);
             PlayerPrefKeys.CurrentGridPattern = PlayerPrefKeys.StartingGridPattern;
         }
+
         private void CreateNewGrid(bool isAnimated)
         {
             StartCoroutine(CreateAnimatedGridPattern(isAnimated));
@@ -107,10 +100,14 @@ namespace Grids
 
         private IEnumerator CreateAnimatedGridPattern(bool isAnimated)
         {
+            //A fun way to start the game, looks like it makes some calculations.
+
+            //I've also added a small chance of difficulty leveling up in the setup as the current level rises.
+            //Each time the puzzle gets more mixed
             var newGrid = 0;
             var maxC = Extensions.Map(PlayerPrefKeys.CurrentPuzzleLevel, 0, 100, 20, 200);
             var range = Random.Range(10, maxC);
-            Debug.Log("Range: " + range);
+            // Debug.Log("Range: " + range);
             _patternYield = new WaitForSeconds(1.5f / range);
 
             for (int i = 0; i < range; i++)
@@ -124,13 +121,12 @@ namespace Grids
             }
 
             SetGrid(newGrid);
-            
+
             yield return null;
-            
+
             PlayerPrefKeys.CurrentGridPattern = newGrid;
             PlayerPrefKeys.StartingGridPattern = newGrid;
             _puzzleUI.GroupSceneTransition.CanvasGroup.interactable = true;
-
         }
 
 
@@ -138,29 +134,30 @@ namespace Grids
         {
             GridMask = new int[CellCount];
 
+            //Mask is initialized once in every start
             Debug.Log("Init Mask: " + GridMask.Length);
             for (int i = 0; i < GridMask.Length; i++)
             {
                 int gridCell = 0;
                 gridCell += 1 << i;
-                if ((i + 1) % 5 != 0)
+                if ((i + 1) % CellRowCount != 0)
                 {
                     gridCell += 1 << i + 1;
                 }
 
-                if (i % 5 != 0)
+                if (i % CellRowCount != 0)
                 {
                     gridCell += 1 << i - 1;
                 }
 
-                if (i + 5 <= 24)
+                if (i + CellRowCount <= GridMask.Length - 1)
                 {
-                    gridCell += 1 << i + 5;
+                    gridCell += 1 << i + CellRowCount;
                 }
 
-                if (i - 5 >= 0)
+                if (i - CellRowCount >= 0)
                 {
-                    gridCell += 1 << i - 5;
+                    gridCell += 1 << i - CellRowCount;
                 }
 
                 GridMask[i] = gridCell;
@@ -189,17 +186,18 @@ namespace Grids
             //In my first task, I thought job chain was looking for win condition,
             //but the only remaining buttons also gives me win...
             // if ((value & (value - 1)) == 0)
-            if(value==0)
+            if (value == 0)
             {
-                Debug.Log("WIN: "+PlayerPrefKeys.CurrentGridPattern);
-                Debug.Log("value : "+ value);
-                Debug.Log("value - 1 : "+ (value - 1));
+                Debug.Log("WIN: " + PlayerPrefKeys.CurrentGridPattern);
+                Debug.Log("value : " + value);
+                Debug.Log("value - 1 : " + (value - 1));
                 LevelManager.InitLevelComplete();
             }
         }
 
-        // public int CurrentGrid => GetCurrentGrid();
 
+        /*
+         // This won't be necessary since we store the grid as integer in PlayerPrefs.
         private int GetCurrentGrid()
         {
             int grid = 0;
@@ -211,11 +209,14 @@ namespace Grids
 
             return grid;
             // return CellList.Sum(t => 1 << Convert.ToInt32(t.IsOn));
-        }
+        }*/
 
         public void SerializeGrid(int gridB)
         {
-            //00.0068988 seconds (but data??)
+            //00.0068988 seconds (this method is little faster but the size of string is nearly doubles the data)
+            //Even if the integer and string represent the same value,
+            //the string may take up more space in memory because it has more characters to store.
+
             /*
              var str = Convert.ToString(gridB, 2);
             var c = 0;
@@ -238,10 +239,6 @@ namespace Grids
                 _gridBList[i] = isLight;
                 CellList[i].Switch(isLight);
             }
-
-
-            // var j = string.Join("", _gridBList);
-            // PlayerPrefKeys.CurrentGridPattern= Convert.ToInt32(j);
         }
     }
 }

@@ -17,7 +17,6 @@ using Utilities;
  */
 
 
-
 //✨One of the primary and easy methods to provide reference dependency in a script can be the Singleton pattern.
 
 //✨Although making both behaviours instances of each other can easily make them find each other,
@@ -40,29 +39,26 @@ public class SomeBehaviour : MonoBehaviour
     {
         // Create a BehaviourRegistry class that will be a Singleton and persist across different scenes.
 
-        BehaviourRegistry.Instance.RegisterBehaviour("SomeBehaviour",this);
-        
+        BehaviourRegistry.Instance.RegisterBehaviour("SomeBehaviour", this);
     }
 
     private void Start()
     {
-
         OtherBehaviour = BehaviourRegistry.Instance.GetBehaviour<MonoBehaviour>("OtherBehaviour");
 
-        if (OtherBehaviour!=null)
+        if (OtherBehaviour != null)
         {
             // Operations dependent on OtherBehaviour
         }
-        
-        
+
+
         //This solution allows you to register any number of MonoBehaviour classes with unique keys in the BehaviourRegistry.
         //You can easily retrieve the registered behaviours in any scene using the Singleton BehaviourRegistry.
-        
-            // Generally I use registration for unique manager classes that also may not be Mono class.
+
+        // Generally I use registration for unique manager classes that also may not be Mono class.
         // DI makes things
         //     a) Easily unit testable 
         //     b) Easily implementation swappable
-
     }
 }
 
